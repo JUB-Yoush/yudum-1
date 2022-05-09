@@ -1,0 +1,15 @@
+grid based dungeon crawler
+the gimmick is that you need to push and pull a weapon around 
+enemies colliding with your weapon is the only way you can defeat them
+goal of each floor is to collect the key and go to the next room.
+
+extra stuff:
+you can fire short range projectiles from the weapon (upgrade)
+
+
+todo:
+
+doing:
+- set up grid based movement
+- set up walls
+done:
