@@ -37,7 +37,7 @@ points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 position = Vector2( 48, 48 )
 
 [node name="Sword" parent="." instance=ExtResource( 3 )]
-position = Vector2( 32, 32 )
+position = Vector2( 16, 32 )
 
 [node name="TileMap" type="TileMap" parent="." groups=["walls"]]
 position = Vector2( 32, 32 )

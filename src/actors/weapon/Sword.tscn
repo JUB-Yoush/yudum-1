@@ -20,3 +20,8 @@ position = Vector2( 8, 8 )
 shape = SubResource( 1 )
 
 [node name="Tween" type="Tween" parent="."]
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2( 8, 8 )
+cast_to = Vector2( 0, 16 )
+collide_with_areas = true

@@ -89,6 +89,14 @@ grab={
  ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="walls"
+2d_physics/layer_2="player"
+2d_physics/layer_3="items"
+2d_physics/layer_4="mobs"
+2d_physics/layer_5="hidden"
+
 [physics]
 
 common/enable_pause_aware_picking=true

@@ -16,12 +16,13 @@ enum States{
 }
 var _state = States.WAITING
 
+
+
 func _ready() -> void:
 	get_parent().get_node("Player").connect("player_moved",self,"on_player_moved")
 
 
 func on_player_moved():
-	print(recovery)
 	match _state:
 		States.WAITING:
 			recovery -= 1
