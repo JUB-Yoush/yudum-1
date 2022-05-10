@@ -1,12 +1,12 @@
 extends Area2D
 
 
-signal player_moved(dir)
+#signal player_moved(dir)
 onready var tween = $Tween
 var tile_size = 16
 
-func on_player_moved(dir):
-	print("from sword")
+func on_moved_item(dir,speed):
+	move(dir,speed)
 
 
 func move(dir,speed):
