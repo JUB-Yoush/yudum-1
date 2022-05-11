@@ -27,10 +27,10 @@ var currentItem:Area2D
 enum States{
 	IDLE,
 	PUSH,
-	RECOVERING
+	NOT_TURN
 }
 var _state = States.IDLE
-
+var last_state
 # ANIMATIONS -----------------------------
 var frame = 0
 var IDLE_anim = [0,1]
@@ -111,14 +111,18 @@ func check(dir):
 			var tile = check_tile(dir)
 			var item_check_tile = currentItem.get_check_tile(dir)
 			
-			if item_check_tile != null and item_check_tile.is_in_group("mobs"):
-				attack_mob(item_check_tile, currentItem)
+			
+				
 				
 			#if going in dir of item, use items check from same dir
 			if tile != null and tile.is_in_group("items"):
 				if item_check_tile == null:
 					tile = item_check_tile
-					
+				elif item_check_tile.is_in_group("mobs"):
+					 attack_mob(item_check_tile, currentItem)
+			
+			if item_check_tile != null and item_check_tile.is_in_group("mobs") and tile == null:
+				attack_mob(item_check_tile, currentItem)
 					
 			if tile == null:
 				
@@ -182,9 +186,12 @@ func check_tile(dir):
 	return tile
 
 func end_turn():
+	last_state = _state
+	_state = States.NOT_TURN
 	emit_signal("player_turn_ended")
 
 func start_turn():
+	_state = last_state
 	change_ap(max_ap)
 	
 func attack_mob(mob,item):
@@ -194,9 +201,5 @@ func attack_mob(mob,item):
 	yield(get_tree().create_timer(speed * 0.025), "timeout")
 	move_tween(-inputted_dir)
 	item.move(-inputted_dir,speed)
-	
-	#move up
-	#make mob take damage
-	#wait a lil bit
-	#move back 
+	yield(get_tree().create_timer(speed * 0.05), "timeout")
 	mob.change_hp(-item.damage)

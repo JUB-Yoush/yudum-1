@@ -45,3 +45,15 @@ the key can be found or dropped by defeating an enemy
  - multiple items need to prioritize dir held
  - item needs to make checks from itself
  - change moving with item method to just run function from item and return tile
+
+
+okay my game is wack:
+- one ray we pass around like a bong lmao
+- things are happening in tandum and multiple actions are taking place at the same time?
+- codebase isn't codebased, it's quite codecringe rn
+
+how to fix:
+- give every direction a ray, store all the rays and the tiles they check in an array
+- try to make check less of a nightmare function
+- try to make things happen clearly once after another, use yield liberally
+okay branch time
