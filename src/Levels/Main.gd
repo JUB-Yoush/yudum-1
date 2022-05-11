@@ -10,7 +10,7 @@ func _ready() -> void:
 #	pass
 
 func on_player_turn_ended():
-	print('turn end from main')
+	
 	#loop thru every enemy
 	#have them run their action
 	#once all have run, run player.start_turn()

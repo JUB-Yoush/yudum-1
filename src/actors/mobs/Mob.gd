@@ -16,7 +16,14 @@ enum States{
 }
 var _state = States.WAITING
 
+var max_hp:int = 6
+var hp:int = max_hp 
 
+func change_hp(hp_diff):
+	hp = max(0, hp + hp_diff)
+	if hp == 0:
+		#make a real death function later
+		die()
 
 func _ready() -> void:
 	pass
@@ -41,8 +48,18 @@ func _ready() -> void:
 	
 
 func act():
+	var tile = check_tile()
 	animate()
 
+func check_tile():
+	#idle state: moves randomly, shoot a bunch of rays that checks if the player is found
+	#if the mob find the player, go into the seek state, and try to follow the player's path.
+	# seek state:
+	pass
+	
 func animate():
 	frame = wrapi(frame + 1, 0, frames)
 	sprite.frame = frame
+
+func die():
+	queue_free()

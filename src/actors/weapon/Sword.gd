@@ -5,13 +5,14 @@ extends Area2D
 onready var tween = $Tween
 onready var ray = $RayCast2D
 var tile_size = 16
+var damage:int = 3
 signal player_let_go
 
 func on_moved_item(dir,speed):
 	ray.cast_to = dir * tile_size 
 	ray.force_raycast_update()
 	var tile = ray.get_collider()
-	if tile == null or tile.is_in_group("player"):
+	if tile == null or tile.is_in_group("player") or tile.is_in_group("mobs"):
 		move(dir,speed)
 	else:
 		emit_signal("player_let_go")

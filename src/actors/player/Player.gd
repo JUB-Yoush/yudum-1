@@ -111,9 +111,8 @@ func check(dir):
 			var tile = check_tile(dir)
 			var item_check_tile = currentItem.get_check_tile(dir)
 			
-			if item_check_tile != null:
-				#check and compare whatever the item ran into
-				pass
+			if item_check_tile != null and item_check_tile.is_in_group("mobs"):
+				attack_mob(item_check_tile, currentItem)
 				
 			#if going in dir of item, use items check from same dir
 			if tile != null and tile.is_in_group("items"):
@@ -187,3 +186,17 @@ func end_turn():
 
 func start_turn():
 	change_ap(max_ap)
+	
+func attack_mob(mob,item):
+	print("attack mob")
+	move_tween(inputted_dir)
+	item.move(inputted_dir,speed)
+	yield(get_tree().create_timer(speed * 0.025), "timeout")
+	move_tween(-inputted_dir)
+	item.move(-inputted_dir,speed)
+	
+	#move up
+	#make mob take damage
+	#wait a lil bit
+	#move back 
+	mob.change_hp(-item.damage)
