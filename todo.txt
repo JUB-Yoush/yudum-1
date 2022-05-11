@@ -3,6 +3,8 @@ the gimmick is that you need to push and pull a weapon around
 enemies colliding with your weapon is the only way you can defeat them
 goal of each floor is to collect the key and go to the next room.
 
+
+
 extra stuff:
 you can fire short range projectiles from the weapon (upgrade)
 
@@ -10,6 +12,36 @@ you can fire short range projectiles from the weapon (upgrade)
 todo:
 
 doing:
+- ap timer system
+- enemy sword interaction 
+- pathfinding (my condolences)
+- sword enemy interactions (make some sort of double scan system, player and grabby)
+- enemy movement
+
+
+
+
+done:
+- fix raycast (have it ignore sword or go past it)
+- make enemy
 - set up grid based movement
 - set up walls
-done:
+- sword grabbing
+
+
+
+enemy behaviour:
+enemies go in seek and idle modes
+in idle mode, they pick a random direction and just move in it
+they have raycasts that shoot out and look for the player
+when they find the player, they go into seek mode and pathfind the player untill the player leaves the range
+
+the goal of each level is to find the key and exit through the door tile, which turns into stairs
+the key can be found or dropped by defeating an enemy
+
+ player has an ap value, you spend 2 ap moving on your own and 3 ap moving while holding an item 
+
+ few things to fix:
+ - multiple items need to prioritize dir held
+ - item needs to make checks from itself
+ - change moving with item method to just run function from item and return tile
