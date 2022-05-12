@@ -25,9 +25,14 @@ var last_state:int = _state
 func _ready() -> void:
 	frames = 2
 	direction = Vector2.RIGHT
+	#connect("turn_ended",get_parent(),"on_player_turn_ended")
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	
+	if _state == States.NOT_TURN:
+		return
+		
 	if tween.is_active():
 		return
 		
@@ -119,6 +124,7 @@ func move(direction:Vector2):
 func change_ap(ap_diff:int):
 	ap += ap_diff
 	if ap <= 0:
+		end_turn()
 		pass
 
 func change_hp(hp_diff:int):

@@ -47,3 +47,9 @@ the key can be found or dropped by defeating an enemy
  - change moving with item method to just run function from item and return tile
 
 
+
+
+okay what now
+- mob actions, from seek and found state.
+- player animations
+

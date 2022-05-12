@@ -11,5 +11,8 @@ modulate = Color( 1, 0.529412, 0.529412, 1 )
 hframes = 2
 region_rect = Rect2( 0, 16, 32, 16 )
 
-[node name="CollisionShape2D" parent="." index="1"]
-visible = false
+[node name="PlayerDetectorRay" type="RayCast2D" parent="." index="5"]
+position = Vector2( 8, 8 )
+rotation = 6.28319
+cast_to = Vector2( 48, 0 )
+collide_with_areas = true
