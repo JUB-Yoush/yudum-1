@@ -1,8 +1,9 @@
 extends Area2D
 class_name Actor
 
-onready var sprite = $Sprite
-onready var tween = $Tween
+onready var sprite := $Sprite
+onready var tween := $Tween
+onready var animPlayer := $AnimationPlayer
 
 var tile_size:int = 16
 var speed:int = 7
@@ -47,7 +48,16 @@ func move_by_tween(direction) -> void:
 	tween.interpolate_property(self, "position",position, position + (direction * tile_size), 1.0/speed, Tween.TRANS_SINE, Tween.EASE_IN_OUT)
 	tween.start()
 
+func interact_anim(direction:Vector2) -> void:
+	tween.interpolate_property(self, "position",position, position + (direction * tile_size), 1.0/speed, Tween.TRANS_SINE, Tween.EASE_IN_OUT)
+	tween.start()
+	yield(get_tree().create_timer(speed * 0.025), "timeout")
+	tween.interpolate_property(self, "position",position, position + (-direction * tile_size), 1.0/speed, Tween.TRANS_SINE, Tween.EASE_IN_OUT)
+	tween.start()
+	yield(get_tree().create_timer(speed * 0.05), "timeout")
+
 func animate():
 	frame = wrapi(frame + 1, 0, frames)
 	sprite.frame = frame
+
 

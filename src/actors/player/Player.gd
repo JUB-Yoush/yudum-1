@@ -9,22 +9,18 @@ var ap:int = max_ap
 
 var currentItem:Actor
 
-#var item_ray_scan_results:Dictionary = {
-#	Vector2.RIGHT:null,
-#	Vector2.LEFT:null,
-#	Vector2.UP:null,
-#	Vector2.DOWN:null
-#}
-
+signal turn_ended
 #ANIMATION ---------------------
 
 
 enum States{
-	NO_ITEM
-	WITH_ITEM
+	NO_ITEM,
+	WITH_ITEM,
+	NOT_TURN
 }
 
 var _state:int = States.NO_ITEM
+var last_state:int = _state
 
 func _ready() -> void:
 	frames = 2
@@ -88,13 +84,14 @@ func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 				elif item_direction_tile.is_in_group("walls") or item_direction_tile.is_in_group("items"):
 					drop_item()
 					move(direction)
-				elif item_direction_tile.is_in_group("mob"):
+				elif item_direction_tile.is_in_group("mobs"):
 					attack_mob(item_direction_tile,currentItem)
 				
 					
 			
 			#moving in dir of item
 			if direction_ray_tile == currentItem:
+				print('facing item')
 				#empty in front of item
 				if item_direction_tile == null:
 					move(direction)
@@ -103,8 +100,9 @@ func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 					attack_mob(item_direction_tile,currentItem)
 					
 			if  item_direction_tile != null and item_direction_tile.is_in_group("player"):
-				move(direction)
-				currentItem.move(direction)
+				if direction_ray_tile == null:
+					move(direction)
+					currentItem.move(direction)
 			
 
 func move(direction:Vector2):
@@ -122,6 +120,16 @@ func change_ap(ap_diff:int):
 	ap += ap_diff
 	if ap <= 0:
 		pass
+
+func change_hp(hp_diff:int):
+	hp = max(0,hp + hp_diff)
+	if hp == 0:
+		die()
+	pass
+
+func take_damage(damage:int):
+	animPlayer.play('hit')
+	change_hp(-damage)
 
 func pressed_grab():
 	match _state:
@@ -146,5 +154,20 @@ func drop_item():
 	currentItem = null
 	
 func attack_mob(mob:Actor,currentItem:Actor):
+	print("attack mob")
+	interact_anim(direction)
+	currentItem.interact_anim(direction)
 	mob.take_damage(currentItem.attack)
 	pass
+
+func die():
+	pass
+
+func start_turn():
+	_state = last_state
+	ap += max_ap
+
+func end_turn():
+	last_state = _state
+	_state = States.NOT_TURN
+	emit_signal("turn_ended")
