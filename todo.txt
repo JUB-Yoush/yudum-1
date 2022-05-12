@@ -45,3 +45,5 @@ the key can be found or dropped by defeating an enemy
  - multiple items need to prioritize dir held
  - item needs to make checks from itself
  - change moving with item method to just run function from item and return tile
+
+

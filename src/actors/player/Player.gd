@@ -1,202 +1,150 @@
-extends Area2D
+extends Actor
 
-onready var sprite = $Sprite
-onready var ray = $RayCast2D
-onready var tween = $Tween
+# PLAYER VARIABLES ------------------------------------
+var max_hp:int = 10
+var hp:int = max_hp
 
-var tile_size:int = 16
+var max_ap:int = 6
+var ap:int = max_ap
 
-var speed = 7
+var currentItem:Actor
 
+#var item_ray_scan_results:Dictionary = {
+#	Vector2.RIGHT:null,
+#	Vector2.LEFT:null,
+#	Vector2.UP:null,
+#	Vector2.DOWN:null
+#}
 
-var item_dir:Vector2
+#ANIMATION ---------------------
 
-signal moved_item(dir,speed)
-signal player_turn_ended
-signal player_moved
-
-# GAME STATS ---------------------
-var max_hp:= 5
-var hp:= max_hp
-
-var max_ap:= 6
-var ap:= max_ap setget change_ap
-
-var currentItem:Area2D
 
 enum States{
-	IDLE,
-	PUSH,
-	RECOVERING
+	NO_ITEM
+	WITH_ITEM
 }
-var _state = States.IDLE
 
-# ANIMATIONS -----------------------------
-var frame = 0
-var IDLE_anim = [0,1]
-var push_anim = [2,3]
-var current_anim:Array
-
-var inputs:Dictionary= {"right": Vector2.RIGHT,
-				"left": Vector2.LEFT,
-				"up":Vector2.UP,
-				"down": Vector2.DOWN}
-
-var directions = [Vector2.RIGHT,Vector2.LEFT,Vector2.UP,Vector2.DOWN]
-
-var inputted_dir:Vector2
-
-
-func change_ap(ap_diff):
-	ap += ap_diff
-	print(ap)
-	if ap <= 0:
-		end_turn()
-	pass
-
-
-
+var _state:int = States.NO_ITEM
 
 func _ready() -> void:
-	position = position.snapped(Vector2.ONE * tile_size)
-	#position += Vector2.ONE * tile_size
+	frames = 2
+	direction = Vector2.RIGHT
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if tween.is_active():
 		return
-	for input in inputs:
-		if event.is_action_pressed(input):
-			inputted_dir = inputs[input]
-			check(inputted_dir)
+		
+	if event.is_action_pressed("right"):
+		ray_scan()
+		direction_ray = rayR
+		direction = direction_ray.cast_to.normalized()
+		check_scanned_tile(direction_ray,direction)
+		
+	elif event.is_action_pressed("left"):
+		ray_scan()
+		direction_ray = rayL
+		direction = direction_ray.cast_to.normalized()
+		check_scanned_tile(direction_ray,direction)
+		
+	elif event.is_action_pressed("up"):
+		ray_scan()
+		direction_ray = rayU
+		direction = direction_ray.cast_to.normalized()
+		check_scanned_tile(direction_ray,direction)
+		
+	elif event.is_action_pressed("down"):
+		ray_scan()
+		direction_ray = rayD
+		direction = direction_ray.cast_to.normalized()
+		check_scanned_tile(direction_ray,direction)
 	
-	if event.is_action_pressed("grab"):
-		match _state:
-			States.IDLE:
-				find_item()
+	elif event.is_action_pressed("grab"):
+		pressed_grab()
+		
 				
-			States.PUSH:
-				drop_item()
+				
+		
 		
 
-func move(dir) -> void:
+func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
+	var direction_ray_tile = direction_ray.get_collider()
+	
 	match _state:
-		States.IDLE:
-			emit_signal("moved_item",dir,speed)
-			emit_signal("player_moved")
-			move_tween(dir)
-			animate(dir)
+		States.NO_ITEM:
+			if direction_ray_tile == null:
+				move(direction)
+		States.WITH_ITEM:
+			var item_ray_scan_results:Dictionary = currentItem.ray_scan()
+			var item_direction_ray:RayCast2D = item_ray_scan_results[direction]
+			var item_direction_tile = item_direction_ray.get_collider()
+			
+#			print(direction_ray_tile)
+#			print(item_direction_tile)
+			if direction_ray_tile == null:
+				if item_direction_tile == null:
+					move(direction)
+					currentItem.move(direction)
+				elif item_direction_tile.is_in_group("walls") or item_direction_tile.is_in_group("items"):
+					drop_item()
+					move(direction)
+				elif item_direction_tile.is_in_group("mob"):
+					attack_mob(item_direction_tile,currentItem)
+				
+					
+			
+			#moving in dir of item
+			if direction_ray_tile == currentItem:
+				#empty in front of item
+				if item_direction_tile == null:
+					move(direction)
+					currentItem.move(direction)
+				elif item_direction_tile.is_in_group("mobs"):
+					attack_mob(item_direction_tile,currentItem)
+					
+			if  item_direction_tile != null and item_direction_tile.is_in_group("player"):
+				move(direction)
+				currentItem.move(direction)
+			
+
+func move(direction:Vector2):
+	match _state:
+		States.NO_ITEM:
+			move_by_tween(direction)
+			animate()
 			change_ap(-2)
-				
-		States.PUSH:
-			emit_signal("moved_item",dir,speed)
-			emit_signal("player_moved")
-			move_tween(dir)
-			animate(dir)
+		States.WITH_ITEM:
+			move_by_tween(direction)
+			animate()
 			change_ap(-3)
-		
-	
 
-func move_tween(dir) -> void:
-	tween.interpolate_property(self, "position",position, position + (dir * tile_size), 1.0/speed, Tween.TRANS_SINE, Tween.EASE_IN_OUT)
-	tween.start()
+func change_ap(ap_diff:int):
+	ap += ap_diff
+	if ap <= 0:
+		pass
 
-func check(dir):
+func pressed_grab():
 	match _state:
-		States.IDLE:
-			var tile = check_tile(dir)
-			if tile == null:
-				move(dir)
-				
-		States.PUSH:
-			var tile = check_tile(dir)
-			var item_check_tile = currentItem.get_check_tile(dir)
+		States.NO_ITEM:
+			ray_scan()
+			direction_ray = ray_scan_results[direction]
+			var direction_ray_tile = direction_ray.get_collider()
+	
+			if direction_ray_tile != null:
+				if direction_ray_tile.is_in_group("items"):
+					grab_item(direction_ray_tile)
+					
+		States.WITH_ITEM:
+			drop_item()
 			
-			if item_check_tile != null and item_check_tile.is_in_group("mobs"):
-				attack_mob(item_check_tile, currentItem)
-				
-			#if going in dir of item, use items check from same dir
-			if tile != null and tile.is_in_group("items"):
-				if item_check_tile == null:
-					tile = item_check_tile
-					
-					
-			if tile == null:
-				
-				emit_signal("moved_item",dir,speed)
-				move(dir)
-				
-				
-					
-			ray.position = Vector2(8,8)
-			ray.cast_to = dir * tile_size
-
-	
-func animate(dir) -> void:
-	match _state:
-		States.IDLE:
-			current_anim = IDLE_anim
-		States.PUSH:
-			current_anim = push_anim
-			
-	frame = wrapi(frame + 1, 0, 2)
-	sprite.frame = current_anim[frame]
-	
-	if _state == States.IDLE:
-		if dir == Vector2.RIGHT:
-			sprite.flip_h = false
-		if dir == Vector2.LEFT:
-			sprite.flip_h = true
-	
-func find_item():
-	#print(inputted_dir)
-	var tile = check_tile(inputted_dir)
-	if tile != null and tile.is_in_group("items"):
-		found_item(tile,inputted_dir)
-
-func found_item(tile,dir):
-	if currentItem == null:
-		
-		_state = States.PUSH
-		currentItem = tile
-		connect("moved_item",currentItem,"on_moved_item")
-		currentItem.connect("player_let_go",self,"drop_item")
-		item_dir = dir
-		if dir == Vector2.RIGHT:
-			sprite.flip_h = false
-		if dir == Vector2.LEFT:
-			sprite.flip_h = true
-		animate(dir)
-	
+func grab_item(item:Actor):
+	currentItem = item
+	_state = States.WITH_ITEM
 
 func drop_item():
-	_state = States.IDLE
-	disconnect("moved_item",currentItem,"on_moved_item")
-	currentItem.disconnect("player_let_go",self,"drop_item")
+	_state = States.NO_ITEM
 	currentItem = null
-	animate(inputted_dir)
-
-func check_tile(dir):
-	ray.cast_to = dir * tile_size
-	ray.force_raycast_update()
-	var tile = ray.get_collider()
-	return tile
-
-func end_turn():
-	emit_signal("player_turn_ended")
-
-func start_turn():
-	change_ap(max_ap)
 	
-func attack_mob(mob,item):
-	print("attack mob")
-	move_tween(inputted_dir)
-	item.move(inputted_dir,speed)
-	yield(get_tree().create_timer(speed * 0.025), "timeout")
-	move_tween(-inputted_dir)
-	item.move(-inputted_dir,speed)
-	
-	#move up
-	#make mob take damage
-	#wait a lil bit
-	#move back 
-	mob.change_hp(-item.damage)
+func attack_mob(mob:Actor,currentItem:Actor):
+	mob.take_damage(currentItem.attack)
+	pass

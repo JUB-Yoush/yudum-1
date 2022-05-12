@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://assets/tilesheet.png" type="Texture" id=1]
 [ext_resource path="res://src/actors/player/Player.tscn" type="PackedScene" id=2]
-[ext_resource path="res://src/actors/weapon/Sword.tscn" type="PackedScene" id=3]
-[ext_resource path="res://src/actors/mobs/Mob.tscn" type="PackedScene" id=4]
+[ext_resource path="res://src/actors/items/Sword.tscn" type="PackedScene" id=3]
 [ext_resource path="res://src/Levels/Main.gd" type="Script" id=5]
 
 [sub_resource type="ConvexPolygonShape2D" id=3]
@@ -31,15 +30,23 @@ points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 "shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
 } ]
 0/z_index = 0
+1/name = "tilesheet.png 1"
+1/texture = ExtResource( 1 )
+1/tex_offset = Vector2( 0, 0 )
+1/modulate = Color( 1, 1, 1, 1 )
+1/region = Rect2( 32, 32, 16, 16 )
+1/tile_mode = 0
+1/occluder_offset = Vector2( 0, 0 )
+1/navigation_offset = Vector2( 0, 0 )
+1/shape_offset = Vector2( 0, 0 )
+1/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+1/shape_one_way = false
+1/shape_one_way_margin = 0.0
+1/shapes = [  ]
+1/z_index = 0
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 5 )
-
-[node name="Player" parent="." instance=ExtResource( 2 )]
-position = Vector2( 48, 48 )
-
-[node name="Sword" parent="." instance=ExtResource( 3 )]
-position = Vector2( 16, 32 )
 
 [node name="TileMap" type="TileMap" parent="." groups=["walls"]]
 position = Vector2( 32, 32 )
@@ -49,11 +56,8 @@ cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
 format = 1
 tile_data = PoolIntArray( -65538, 0, 0, -65537, 0, 0, -131072, 0, 0, -131071, 0, 0, -2, 0, 0, 65534, 0, 0, 131070, 0, 0, 196606, 0, 0 )
 
-[node name="Enemy" parent="." instance=ExtResource( 4 )]
-position = Vector2( 48, 16 )
+[node name="Sword" parent="." instance=ExtResource( 3 )]
+position = Vector2( 16, 32 )
 
-[node name="Sword2" parent="." instance=ExtResource( 3 )]
-position = Vector2( 96, 32 )
-
-[node name="Enemy2" parent="." instance=ExtResource( 4 )]
-position = Vector2( 64, 32 )
+[node name="Player" parent="." groups=["player"] instance=ExtResource( 2 )]
+position = Vector2( 16, 48 )
