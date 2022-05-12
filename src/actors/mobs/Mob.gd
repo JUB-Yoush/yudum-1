@@ -12,9 +12,9 @@ enum States {
 	FINDING_PLAYER,
 	FOUND_PLAYER
 }
-
+var vector_to_player:Vector2
 onready var playerDetectorRay = $PlayerDetectorRay
-signal turn_ended
+signal turn_ended(mob)
 signal done_scanning
 signal local_done_turn
 var _state = States.FINDING_PLAYER
@@ -35,16 +35,7 @@ func act():
 		ray_scan()
 		look_for_player()
 		yield(self,"done_scanning")
-		# check for player.
-		#if player not found, go to finding player state.
-		# if player found, go to found player state
 		
-		# in finding plaeyr:
-		# pick random dir and move there
-		
-		# in found player
-		# move towards player
-		# if player on tile then attack player
 		
 		match _state:
 			States.FINDING_PLAYER:
@@ -53,7 +44,8 @@ func act():
 			States.FOUND_PLAYER:
 				act_found_player()
 				pass
-				
+		
+		animate()
 		ap -= 1
 		
 		
@@ -93,16 +85,26 @@ func attack_player():
 	pass	
 	
 func act_found_player():
+	var p_vector_x = vector_to_player.x
+	var p_vector_y = vector_to_player.x
+	var larger_value:Vector2
 	
-	pass
-
+	if abs(vector_to_player.x) > abs(vector_to_player.y):
+		larger_value = Vector2.RIGHT * sign(vector_to_player.x)
+	elif abs(vector_to_player.x) < abs(vector_to_player.y):
+		larger_value = Vector2.DOWN * sign(vector_to_player.y)
+	elif abs(vector_to_player.x) == abs(vector_to_player.y):
+		larger_value = Vector2.RIGHT * sign(vector_to_player.x)
+	move_by_tween(larger_value)
+		
+		
 func look_for_player():
 	var found_player = false
 	var foundRay:RayCast2D
 	playerDetectorRay.rotation_degrees = 0
 	for i in range(360/15):
 		playerDetectorRay.cast_to = Vector2(64,0).rotated(deg2rad(15 * i))
-		yield(get_tree().create_timer(speed * 0.005), "timeout")
+		yield(get_tree().create_timer(0.00001), "timeout")
 		playerDetectorRay.force_raycast_update()
 #		if playerDetectorRay.get_collider() != null:
 #			print(playerDetectorRay.get_collider().get_groups())
@@ -122,7 +124,11 @@ func look_for_player():
 
 func ray_detected_player(foundRay):
 	print(foundRay.cast_to)
+	vector_to_player = foundRay.cast_to.normalized()
 	_state = States.FOUND_PLAYER
+	#normalize it
+	#see if the x or y is bigger
+	# go in that direction
 	pass
 
 func ray_no_detect_player():
@@ -130,6 +136,6 @@ func ray_no_detect_player():
 
 func end_turn():
 	print('turn ended')
-	emit_signal("turn_ended")
+	emit_signal("turn_ended",self)
 	ap = max_ap
 	pass

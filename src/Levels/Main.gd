@@ -19,8 +19,9 @@ func start_mob_turns(mobs):
 	mob.act()
 	
 	
-func on_mob_turn_ended():
+func on_mob_turn_ended(mob):
 	print('turn over')
+	mob.disconnect("turn_ended",self,"on_mob_turn_ended")
 	var mobs:Array = get_mobs()
 	mob_index = min(mob_index + 1, mobs.size())
 	if mob_index == mobs.size():
