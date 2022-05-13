@@ -13,7 +13,7 @@ font_data = ExtResource( 3 )
 script = ExtResource( 2 )
 
 [node name="Sprite" parent="." index="0" groups=["players"]]
-modulate = Color( 0.219608, 1, 0.686275, 1 )
+modulate = Color( 0.988235, 0.74902, 0.717647, 1 )
 hframes = 4
 region_rect = Rect2( 0, 0, 64, 16 )
 
@@ -25,7 +25,8 @@ limit_left = 0
 limit_top = 0
 limit_right = 448
 limit_bottom = 256
-smoothing_speed = 10.0
+limit_smoothed = true
+smoothing_enabled = true
 drag_margin_left = 0.5
 drag_margin_top = 0.5
 drag_margin_right = 0.5
@@ -71,3 +72,5 @@ text = "HP:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="7"]

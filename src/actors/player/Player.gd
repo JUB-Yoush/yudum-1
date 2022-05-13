@@ -1,7 +1,7 @@
 extends Actor
 
 # PLAYER VARIABLES ------------------------------------
-var max_hp:int = 10
+var max_hp:int = 3
 var hp:int = max_hp
 
 var max_ap:int = 5
@@ -11,8 +11,21 @@ var currentItem:Actor
 var stage = 1
 signal turn_ended
 #ANIMATION ---------------------
-
+var noitem_colour = "fcbfb7"
+var item_colour = "C1D7AE"
 onready var ui = $UI
+onready var audio := $AudioStreamPlayer
+
+# SOUND EFFECTS -------------------------------
+var walking_sfx= load("res://assets/sounds/player_walk.wav")
+var hit_sfx  := load("res://assets/sounds/hit.wav")
+var open_door_sfx  := load("res://assets/sounds/open_door.wav")
+var grab_item_sfx  := load("res://assets/sounds/grab_item.wav")
+var drop_item_sfx  := load("res://assets/sounds/drop_item.wav")
+var next_floor_sfx := load("res://assets/sounds/next_level.wav")
+
+
+
 
 enum States{
 	NO_ITEM,
@@ -28,6 +41,7 @@ var _state:int = States.NO_ITEM
 var last_state:int = _state
 
 func _ready() -> void:
+	play_sfx(next_floor_sfx)
 	frames = 2
 	direction = Vector2.RIGHT
 	ui.update_hp_label(hp)
@@ -84,6 +98,7 @@ func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 				move(direction)
 			elif direction_ray_tile.is_in_group("stairs"):
 				get_parent().goto_next_level()
+				
 		States.WITH_ITEM:
 			#print(currentItem.get_groups())
 			var item_ray_scan_results:Dictionary = currentItem.ray_scan()
@@ -110,7 +125,7 @@ func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 			
 			#moving in dir of item
 			if direction_ray_tile == currentItem:
-				if currentItem.is_in_group("keys") and item_direction_tile != null and item_direction_tile.is_in_group("doors"):
+				if currentItem != null and currentItem.is_in_group("keys") and item_direction_tile != null and item_direction_tile.is_in_group("doors"):
 					open_door(item_direction_tile,direction)
 				#empty in front of item
 				elif item_direction_tile == null or item_direction_tile.is_in_group("door"):
@@ -136,6 +151,7 @@ func move(direction:Vector2):
 			move_by_tween(direction)
 			animate()
 			change_ap(-3)
+	play_sfx(walking_sfx)
 
 func change_ap(ap_diff:int):
 	print(ap)
@@ -155,6 +171,7 @@ func change_hp(hp_diff:int):
 func take_damage(damage:int):
 	animPlayer.play('hit')
 	change_hp(-damage)
+	play_sfx(hit_sfx)
 
 func pressed_grab():
 	match _state:
@@ -174,11 +191,13 @@ func grab_item(item:Actor):
 	currentItem = item
 	_state = States.WITH_ITEM
 	animate()
+	play_sfx(grab_item_sfx)
 
 func drop_item():
 	_state = States.NO_ITEM
 	currentItem = null
 	animate()
+	play_sfx(drop_item_sfx)
 	
 func attack_mob(mob:Actor,currentItem:Actor):
 	interact_anim(direction)
@@ -190,6 +209,7 @@ func attack_mob(mob:Actor,currentItem:Actor):
 	pass
 
 func die():
+	get_tree().reload_current_scene()
 	pass
 
 func start_turn():
@@ -214,6 +234,7 @@ func open_door(door,direction):
 	var oldItem = currentItem
 	drop_item()
 	oldItem.opened_door()
+	play_sfx(open_door_sfx)
 	change_ap(-3)
 	pass
 
@@ -221,8 +242,10 @@ func animate():
 	match _state:
 		States.NO_ITEM:
 			current_anim = idle_anim
+			sprite.modulate = noitem_colour 
 		States.WITH_ITEM:
 			current_anim = push_anim
+			sprite.modulate = item_colour 
 			
 	frame = wrapi(frame + 1, 0, frames)
 	sprite.frame = current_anim[frame]
@@ -241,3 +264,8 @@ func pass_ap():
 			change_ap(-2)
 		States.WITH_ITEM:
 				change_ap(-3)
+
+
+func play_sfx(sfx):
+	audio.set_stream(sfx)
+	audio.play()

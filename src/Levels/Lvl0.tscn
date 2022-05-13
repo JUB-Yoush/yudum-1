@@ -92,7 +92,7 @@ format = 1
 tile_data = PoolIntArray( 6, 0, 0, 65542, 0, 0, 131077, 1, 0, 131078, 0, 0, 131079, 0, 0, 131080, 0, 0, 196613, 0, 0, 196614, 0, 0, 196615, 0, 0, 196616, 0, 0, 262149, 0, 0, 262150, 0, 0, 262151, 1, 0, 262152, 0, 0, 327685, 1, 0, 327686, 0, 0, 327687, 0, 0, 327688, 0, 0, 393222, 0, 0, 458757, 1, 0, 458758, 0, 0, 458759, 0, 0, 458760, 0, 0, 524293, 0, 0, 524294, 0, 0, 524295, 0, 0, 524296, 1, 0, 589829, 0, 0, 589830, 0, 0, 589831, 0, 0, 589832, 0, 0 )
 
 [node name="TileMap" type="TileMap" parent="." groups=["walls"]]
-modulate = Color( 0.607843, 0.560784, 0.560784, 1 )
+modulate = Color( 0.682353, 0.541176, 0.435294, 1 )
 position = Vector2( 32, 32 )
 tile_set = SubResource( 2 )
 cell_size = Vector2( 16, 16 )
@@ -111,10 +111,3 @@ position = Vector2( 128, 128 )
 
 [node name="Stairs" parent="." instance=ExtResource( 3 )]
 position = Vector2( 128, 32 )
-
-[node name="TextureRect" type="TextureRect" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}

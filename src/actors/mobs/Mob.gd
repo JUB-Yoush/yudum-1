@@ -6,17 +6,25 @@ var hp := max_hp
 
 var max_ap := 1
 var ap = max_ap
+var just_found_player = false
 
+# SFX ------------------------------------
+var hit_sfx  := load("res://assets/sounds/hit.wav")
+var found_sfx  := load("res://assets/sounds/mob_found_player.wav")
+var walk_sfx  := load("res://assets/sounds/mob_walk.wav")
+var die_sfx  := load("res://assets/sounds/mob_die_new.wav")
 
-var damage := 3
+onready var audio = $AudioStreamPlayer
+
+var damage := 1
 var alive = true
 export var drops_key = false
 enum States {
 	FINDING_PLAYER,
 	FOUND_PLAYER
 }
-var found_colour := "ff8787"
-var finding_colour := "ffe787"
+var found_colour := "F53A29"
+var finding_colour := "F1A208"
 
 var vector_to_player:Vector2
 onready var playerDetectorRay = $PlayerDetectorRay
@@ -71,11 +79,13 @@ func act():
 func take_damage(damage:int):
 	animPlayer.play('hit')
 	change_hp(-damage)
+	play_sfx(hit_sfx)
 
 
 func die():
 	print('died')
 	alive = false
+	play_sfx(found_sfx)
 	hide()
 	
 
@@ -88,6 +98,7 @@ func act_find_player():
 	if empty_directions.size() >= 1:
 		var rng_direction = empty_directions[randi() % empty_directions.size()]
 		move_by_tween(rng_direction)
+		play_sfx(walk_sfx)
 	
 	
 func attack_player(player,direction):
@@ -118,6 +129,7 @@ func act_found_player():
 			
 	if !found_player:
 		move_by_tween(larger_value)
+		play_sfx(walk_sfx)
 		
 		
 		
@@ -154,6 +166,10 @@ func look_for_player():
 	
 
 func ray_detected_player(foundRay):
+	if just_found_player == false:
+		just_found_player = true
+		play_sfx(found_sfx)
+		
 	print(foundRay.cast_to)
 	vector_to_player = foundRay.cast_to.normalized()
 	_state = States.FOUND_PLAYER
@@ -163,9 +179,14 @@ func ray_detected_player(foundRay):
 	pass
 
 func ray_no_detect_player():
+	just_found_player = false
 	_state = States.FINDING_PLAYER
 
 func end_turn():
 	emit_signal("turn_ended",self)
 	ap = max_ap
 	pass
+
+func play_sfx(sfx):
+	audio.set_stream(sfx)
+	audio.play()

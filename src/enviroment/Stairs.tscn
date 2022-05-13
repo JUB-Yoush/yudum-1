@@ -8,6 +8,7 @@ extents = Vector2( 7, 7 )
 [node name="Stairs" type="Area2D" groups=["stairs"]]
 
 [node name="Sprite" type="Sprite" parent="." groups=["stairs"]]
+modulate = Color( 0.984314, 0.807843, 0.454902, 1 )
 texture = ExtResource( 1 )
 centered = false
 region_enabled = true

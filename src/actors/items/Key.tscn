@@ -7,4 +7,5 @@
 script = ExtResource( 2 )
 
 [node name="Sprite" parent="." index="0"]
+modulate = Color( 0.984314, 0.807843, 0.454902, 1 )
 region_rect = Rect2( 48, 16, 16, 16 )
