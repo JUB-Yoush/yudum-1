@@ -68,7 +68,8 @@ func _input(event: InputEvent) -> void:
 	
 	elif event.is_action_pressed("grab"):
 		pressed_grab()
-		
+	elif event.is_action_pressed("pass"):
+		pass_ap()
 				
 				
 		
@@ -233,4 +234,10 @@ func animate():
 			sprite.flip_h = true
 	
 
-			
+
+func pass_ap():
+	match _state:
+		States.NO_ITEM:
+			change_ap(-2)
+		States.WITH_ITEM:
+				change_ap(-3)
