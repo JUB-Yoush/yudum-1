@@ -4,7 +4,7 @@ extends Actor
 var max_hp:int = 10
 var hp:int = max_hp
 
-var max_ap:int = 6
+var max_ap:int = 5
 var ap:int = max_ap
 
 var currentItem:Actor
@@ -70,7 +70,6 @@ func _input(event: InputEvent) -> void:
 
 func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 	var direction_ray_tile = direction_ray.get_collider()
-	
 	match _state:
 		States.NO_ITEM:
 			if direction_ray_tile == null:
@@ -78,7 +77,7 @@ func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 		States.WITH_ITEM:
 			var item_ray_scan_results:Dictionary = currentItem.ray_scan()
 			var item_direction_ray:RayCast2D = item_ray_scan_results[direction]
-			var item_direction_tile = item_direction_ray.get_collider()
+			var item_direction_tile := item_direction_ray.get_collider()
 			
 #			print(direction_ray_tile)
 #			print(item_direction_tile)
@@ -89,27 +88,28 @@ func check_scanned_tile(direction_ray:RayCast2D,direction:Vector2):
 				elif item_direction_tile.is_in_group("walls") or item_direction_tile.is_in_group("items"):
 					drop_item()
 					move(direction)
-				elif item_direction_tile.is_in_group("mobs"):
+				elif item_direction_tile.is_in_group("mobs") and currentItem.is_in_group("swords"):
 					attack_mob(item_direction_tile,currentItem)
+				
 				
 					
 			
 			#moving in dir of item
 			if direction_ray_tile == currentItem:
-				print('facing item')
 				#empty in front of item
-				if item_direction_tile == null:
+				if item_direction_tile == null or item_direction_tile.is_in_group("door"):
 					move(direction)
 					currentItem.move(direction)
-				elif item_direction_tile.is_in_group("mobs"):
+				elif item_direction_tile.is_in_group("mobs") and currentItem.is_in_group("swords"):
 					attack_mob(item_direction_tile,currentItem)
 					
-			if  item_direction_tile != null and item_direction_tile.is_in_group("player"):
+			elif  item_direction_tile != null and item_direction_tile.is_in_group("player"):
 				if direction_ray_tile == null:
 					move(direction)
 					currentItem.move(direction)
 			
-
+			
+			
 func move(direction:Vector2):
 	match _state:
 		States.NO_ITEM:
@@ -122,6 +122,7 @@ func move(direction:Vector2):
 			change_ap(-3)
 
 func change_ap(ap_diff:int):
+	print(ap)
 	ap += ap_diff
 	if ap <= 0:
 		end_turn()
@@ -160,10 +161,13 @@ func drop_item():
 	currentItem = null
 	
 func attack_mob(mob:Actor,currentItem:Actor):
-	print("attack mob")
 	interact_anim(direction)
+	print('attack')
 	currentItem.interact_anim(direction)
 	mob.take_damage(currentItem.attack)
+	#yield(mob,"done_taking_damage")
+	
+	#change_ap(-3)
 	pass
 
 func die():
@@ -177,3 +181,16 @@ func end_turn():
 	last_state = _state
 	_state = States.NOT_TURN
 	emit_signal("turn_ended")
+
+func signaled_change_ap():
+	change_ap(-3)
+
+func open_door(door,direction):
+	interact_anim(direction)
+	currentItem.interact_anim(direction)
+	door.open()
+	var oldItem = currentItem
+	drop_item()
+	oldItem.opened_door()
+	change_ap(-3)
+	pass

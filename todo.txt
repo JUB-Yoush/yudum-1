@@ -50,6 +50,12 @@ the key can be found or dropped by defeating an enemy
 
 
 okay what now
-- mob actions, from seek and found state.
 - player animations
+- enemy needs to beat up the player.
+
+- keys and doors
+- ui 
+- win states and lose states
+- levels
+- ur done lmao
 

@@ -7,7 +7,9 @@ var hp := max_hp
 var max_ap := 1
 var ap = max_ap
 
+
 var damage := 3
+var alive = true
 enum States {
 	FINDING_PLAYER,
 	FOUND_PLAYER
@@ -17,12 +19,15 @@ onready var playerDetectorRay = $PlayerDetectorRay
 signal turn_ended(mob)
 signal done_scanning
 signal local_done_turn
+signal done_taking_damage
 var _state = States.FINDING_PLAYER
 
 func change_hp(hp_diff):
 	hp = max(0, hp + hp_diff)
 	if hp == 0:
 		die()
+	print("done taking damage")
+	get_parent().get_node("Player").change_ap(-3)
 	
 
 func _ready() -> void:
@@ -31,7 +36,6 @@ func _ready() -> void:
 
 func act():
 	while ap > 0:
-		print('ap != 0')
 		ray_scan()
 		look_for_player()
 		yield(self,"done_scanning")
@@ -49,7 +53,6 @@ func act():
 		ap -= 1
 		
 		
-	print('out of loop')
 	end_turn()
 	
 			
@@ -62,15 +65,11 @@ func take_damage(damage:int):
 
 
 func die():
+	print('died')
+	alive = false
 	queue_free()
 
 func act_find_player():
-	#scan rays, store empty ones in an array
-	#if array is empty, skip turn
-	#if any of them find the player, attack the player
-	#pick a random direction to move in from the array
-	#move
-	
 	var empty_directions:Array
 	for ray in ray_scan_results.keys():
 		if ray_scan_results[ray].get_collider() == null:
@@ -81,8 +80,9 @@ func act_find_player():
 		move_by_tween(rng_direction)
 	
 	
-func attack_player():
-	pass	
+func attack_player(player,direction):
+	interact_anim(direction)
+	player.take_damage(damage)
 	
 func act_found_player():
 	var p_vector_x = vector_to_player.x
@@ -95,7 +95,19 @@ func act_found_player():
 		larger_value = Vector2.DOWN * sign(vector_to_player.y)
 	elif abs(vector_to_player.x) == abs(vector_to_player.y):
 		larger_value = Vector2.RIGHT * sign(vector_to_player.x)
-	move_by_tween(larger_value)
+	
+	var found_player = false
+	ray_scan()
+	for ray in ray_scan_results.keys():
+		if ray_scan_results[ray].get_collider() != null:
+			print(ray_scan_results[ray].get_collider())
+		if ray_scan_results[ray].get_collider() != null and ray_scan_results[ray].get_collider().is_in_group("player"):
+			print('got player')
+			found_player == true
+			attack_player(ray_scan_results[ray].get_collider(),ray)
+			
+	if !found_player:
+		move_by_tween(larger_value)
 		
 		
 func look_for_player():
@@ -135,7 +147,6 @@ func ray_no_detect_player():
 	_state = States.FINDING_PLAYER
 
 func end_turn():
-	print('turn ended')
 	emit_signal("turn_ended",self)
 	ap = max_ap
 	pass
