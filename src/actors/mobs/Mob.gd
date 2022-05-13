@@ -10,10 +10,14 @@ var ap = max_ap
 
 var damage := 3
 var alive = true
+export var drops_key = false
 enum States {
 	FINDING_PLAYER,
 	FOUND_PLAYER
 }
+var found_colour := "ff8787"
+var finding_colour := "ffe787"
+
 var vector_to_player:Vector2
 onready var playerDetectorRay = $PlayerDetectorRay
 signal turn_ended(mob)
@@ -39,13 +43,18 @@ func act():
 		ray_scan()
 		look_for_player()
 		yield(self,"done_scanning")
-		
+		if alive == false:
+			if drops_key:
+				get_parent().make_key(position)
+			queue_free()
 		
 		match _state:
 			States.FINDING_PLAYER:
+				sprite.modulate = finding_colour
 				act_find_player()
 				pass
 			States.FOUND_PLAYER:
+				sprite.modulate = found_colour
 				act_found_player()
 				pass
 		
@@ -67,7 +76,8 @@ func take_damage(damage:int):
 func die():
 	print('died')
 	alive = false
-	queue_free()
+	hide()
+	
 
 func act_find_player():
 	var empty_directions:Array
@@ -110,10 +120,16 @@ func act_found_player():
 		move_by_tween(larger_value)
 		
 		
+		
+		
 func look_for_player():
 	var found_player = false
 	var foundRay:RayCast2D
 	playerDetectorRay.rotation_degrees = 0
+	#var all_items = get_tree().get_nodes_in_group("items")
+#	for item in all_items:
+#		item.collision_layer = 4
+		
 	for i in range(360/15):
 		playerDetectorRay.cast_to = Vector2(64,0).rotated(deg2rad(15 * i))
 		yield(get_tree().create_timer(0.00001), "timeout")
@@ -124,12 +140,15 @@ func look_for_player():
 			found_player = true
 			foundRay = playerDetectorRay
 			ray_detected_player(foundRay)
-			
+	
+#	for item in all_items:
+#		item.collision_layer = 1
+		
 	if found_player:
 		pass
 	else:
 		ray_no_detect_player()
-	
+		
 	emit_signal("done_scanning")
 	
 	

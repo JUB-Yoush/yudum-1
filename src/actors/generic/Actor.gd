@@ -6,7 +6,7 @@ onready var tween := $Tween
 onready var animPlayer := $AnimationPlayer
 
 var tile_size:int = 16
-var speed:int = 7
+var speed:int = 10
 
 var frame:int = 0
 var frames
