@@ -135,3 +135,5 @@ drops_key = true
 
 [node name="Stairs" parent="." instance=ExtResource( 4 )]
 position = Vector2( 176, 16 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]

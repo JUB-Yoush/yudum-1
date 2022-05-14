@@ -127,3 +127,5 @@ position = Vector2( 128, 48 )
 
 [node name="Key" parent="." instance=ExtResource( 9 )]
 position = Vector2( 208, 32 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]

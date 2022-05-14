@@ -1,6 +1,8 @@
 extends Node2D
 
 onready var player = get_node("Player")
+onready var audio = $AudioStreamPlayer
+var mob_die_sfx := load("res://assets/sounds/mob_die_new.wav")
 var mob_index = 0
 export var next_stage:PackedScene
 var Key = preload("res://src/actors/items/Key.tscn")
@@ -44,3 +46,9 @@ func make_key(spawn_position:Vector2):
 	var key = Key.instance()
 	key.position = spawn_position
 	add_child(key)
+
+func play_sfx(sfx):
+	audio.set_stream(sfx)
+	audio.play()
+
+	

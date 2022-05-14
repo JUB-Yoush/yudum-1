@@ -85,7 +85,7 @@ func take_damage(damage:int):
 func die():
 	print('died')
 	alive = false
-	play_sfx(found_sfx)
+	get_parent().play_sfx(die_sfx)
 	hide()
 	
 
