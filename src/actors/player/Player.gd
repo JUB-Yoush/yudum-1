@@ -13,7 +13,7 @@ signal turn_ended
 #ANIMATION ---------------------
 var noitem_colour = "fcbfb7"
 var item_colour = "C1D7AE"
-onready var ui = $UI
+onready var ui = $CanvasLayer/UI
 onready var audio := $AudioStreamPlayer
 
 # SOUND EFFECTS -------------------------------

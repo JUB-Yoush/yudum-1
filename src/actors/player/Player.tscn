@@ -32,7 +32,12 @@ drag_margin_top = 0.5
 drag_margin_right = 0.5
 drag_margin_bottom = 0.5
 
-[node name="UI" type="Control" parent="." index="6"]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="6"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="7"]
+layer = 2
+
+[node name="UI" type="Control" parent="CanvasLayer" index="0"]
 margin_left = -19.0
 margin_top = 62.0
 margin_right = 21.0
@@ -42,35 +47,36 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="UI" index="0"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/UI" index="0"]
 self_modulate = Color( 0.439216, 0.439216, 0.439216, 0.478431 )
 margin_left = 19.0
 margin_top = -45.0
-margin_right = 35.0
-margin_bottom = -29.0
+margin_right = 43.0
+margin_bottom = -13.0
 texture = ExtResource( 4 )
+expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ApLabel" type="Label" parent="UI/TextureRect" index="0"]
-margin_top = -6.0
-margin_right = 40.0
-margin_bottom = 8.0
+[node name="ApLabel" type="Label" parent="CanvasLayer/UI/TextureRect" index="0"]
+margin_left = 1.0
+margin_top = 1.0
+margin_right = 41.0
+margin_bottom = 15.0
 custom_fonts/font = SubResource( 1 )
 text = "AP:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HpLabel" type="Label" parent="UI/TextureRect" index="1"]
-margin_top = 3.0
-margin_right = 40.0
-margin_bottom = 17.0
+[node name="HpLabel" type="Label" parent="CanvasLayer/UI/TextureRect" index="1"]
+margin_left = 1.0
+margin_top = 14.0
+margin_right = 41.0
+margin_bottom = 28.0
 custom_fonts/font = SubResource( 1 )
 text = "HP:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="7"]
