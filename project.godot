@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Yudum- 1"
-run/main_scene="res://src/Levels/Lvl0.tscn"
+run/main_scene="res://src/Levels/StartScreen.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -101,6 +101,11 @@ grab={
 scan={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":88,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+restart={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":82,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 

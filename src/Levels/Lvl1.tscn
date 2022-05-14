@@ -110,6 +110,9 @@ position = Vector2( 160, 32 )
 [node name="Mob" parent="." instance=ExtResource( 4 )]
 position = Vector2( 160, 80 )
 
+[node name="Mob2" parent="." instance=ExtResource( 4 )]
+position = Vector2( 112, 176 )
+
 [node name="Key" parent="." instance=ExtResource( 6 )]
 position = Vector2( 192, 128 )
 

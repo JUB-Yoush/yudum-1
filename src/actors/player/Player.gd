@@ -84,6 +84,9 @@ func _input(event: InputEvent) -> void:
 		pressed_grab()
 	elif event.is_action_pressed("pass"):
 		pass_ap()
+	elif event.is_action_pressed("restart"):
+		get_tree().reload_current_scene()
+		
 				
 				
 		
